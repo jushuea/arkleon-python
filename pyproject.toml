@@ -1,0 +1,60 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "arkleon"
+version = "0.1.0"
+description = "Point-in-time SEC EDGAR fundamentals: free fetch/parse helpers, an optional certified /v1 client, and a built-in MCP server."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "Arkleon LLC", email = "founder@arkleon.com" }]
+keywords = [
+    "sec",
+    "edgar",
+    "xbrl",
+    "fundamentals",
+    "point-in-time",
+    "as-reported",
+    "financial-data",
+    "filings",
+    "10-K",
+    "10-Q",
+    "mcp",
+    "financial-statement-data-sets",
+]
+dependencies = ["httpx>=0.27"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Office/Business :: Financial",
+]
+
+[project.optional-dependencies]
+api = ["httpx>=0.27"]
+mcp = ["mcp>=1.9"]
+pandas = ["pandas>=2.0"]
+all = ["httpx>=0.27", "mcp>=1.9", "pandas>=2.0"]
+
+[project.urls]
+Homepage = "https://github.com/arkleon/arkleon"
+Repository = "https://github.com/arkleon/arkleon"
+"SEC fair access" = "https://www.sec.gov/os/accessing-edgar-data"
+
+[project.scripts]
+arkleon-mcp = "arkleon.mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/arkleon"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src/arkleon",
+    "/README.md",
+    "/LICENSE",
+]
