@@ -170,5 +170,5 @@ MIT. See [LICENSE](LICENSE).
 
 - **`/v1` API contract:** `docs/data-layer/api-v1-contract.md` (Appendix A is the
   authority for the corpus figures above).
-- **Issues and contributing:** https://github.com/arkleon/arkleon
+- **Issues and contributing:** https://github.com/jushuea/arkleon-python
 - **SEC fair-access policy:** https://www.sec.gov/os/accessing-edgar-data
