@@ -1,0 +1,4 @@
+arkleon[all]==0.1.2
+jupyter
+nbclient
+pytest
