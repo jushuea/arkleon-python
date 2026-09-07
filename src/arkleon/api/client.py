@@ -31,7 +31,7 @@ from .pagination import Page, paginate
 
 __all__ = ["DataClient"]
 
-DEFAULT_BASE_URL = "https://api.arkleon.com/v1"
+DEFAULT_BASE_URL = "https://arkleon.com/v1"
 
 # Internal ingest telemetry the contract forbids on /v1 (section 3.1.1). The
 # server MUST NOT emit these; the client strips them as defense in depth so a
