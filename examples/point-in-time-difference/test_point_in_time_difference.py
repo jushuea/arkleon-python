@@ -2,8 +2,14 @@ import json
 import os
 from pathlib import Path
 
-import nbformat
-from nbclient import NotebookClient
+import pytest
+
+# This test executes the example notebook, which needs the Jupyter runner
+# (nbformat + nbclient). Those are not dependencies of the EDGAR client, so they
+# are not installed by default; skip the whole module (rather than erroring at
+# collection) when they are absent.
+nbformat = pytest.importorskip("nbformat")
+NotebookClient = pytest.importorskip("nbclient").NotebookClient
 
 os.environ.setdefault("SEC_EDGAR_USER_AGENT", "arkleon point-in-time example (founder@arkleon.com)")
 
