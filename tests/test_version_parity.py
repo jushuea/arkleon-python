@@ -1,4 +1,4 @@
-"""Verify that the server manifest versions match the package version."""
+"""Verify that the server manifest and MCP handshake versions match the package."""
 
 from __future__ import annotations
 
@@ -23,5 +23,14 @@ def test_server_versions_match_runtime_constant() -> None:
     package_version = server["packages"][0]["version"]
     assert package_version == runtime_version, (
         f"server.json packages[0] version {package_version!r} does not match "
+        f"arkleon.__version__ {runtime_version!r}"
+    )
+
+    # The MCP handshake advertises SERVER_VERSION; the registry reads it from the
+    # handshake, so it must agree with the package version too (same anchor).
+    from arkleon.mcp.server import SERVER_VERSION
+
+    assert SERVER_VERSION == runtime_version, (
+        f"MCP handshake SERVER_VERSION {SERVER_VERSION!r} does not match "
         f"arkleon.__version__ {runtime_version!r}"
     )
