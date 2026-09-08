@@ -40,7 +40,7 @@ Launch config:
 
 URL: https://registry.modelcontextprotocol.io
 
-1. Prerequisite: publish arkleon 0.1.2 to PyPI with README.md containing the ownership line `<!-- mcp-name: io.github.jushuea/arkleon -->`; the registry verifies PyPI ownership by that string in the package README.
+1. Prerequisite: publish arkleon 0.1.3 to PyPI with README.md containing the ownership line `<!-- mcp-name: io.github.jushuea/arkleon -->`; the registry verifies PyPI ownership by that string in the package README.
 2. Install `mcp-publisher`:
    ```bash
    curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" | tar xz mcp-publisher
@@ -113,7 +113,7 @@ Required fields:
 
 ## AWAITING OPERATOR
 
-1. Release arkleon 0.1.2 to PyPI with the README ownership line.
+1. Release arkleon 0.1.3 to PyPI with the README ownership line.
 2. Complete GitHub device login.
 3. Approve the listing copy.
 4. Decide whether to build an MCPB bundle for Smithery.
