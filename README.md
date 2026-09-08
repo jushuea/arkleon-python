@@ -1,4 +1,5 @@
 # arkleon
+<!-- mcp-name: io.github.jushuea/arkleon -->
 
 Point-in-time SEC EDGAR fundamentals: free EDGAR fetch/parse helpers with zero
 credentials, plus an optional certified `/v1` client and a built-in MCP server.
@@ -97,6 +98,11 @@ when an `ak_` key is present**. An agent with no key sees exactly the free set.
 | `pit_filings` | paid `/v1` client | Yes |
 | `resolve_company` | paid `/v1` client | Yes |
 | `pit_revision_history` | paid `/v1` client | Yes |
+
+**Registry:** The server is described by `server.json` at the repository root for
+the official MCP registry under the name `io.github.jushuea/arkleon`. It launches
+over stdio as `arkleon-mcp`; the free EDGAR tools register unconditionally and the
+paid tools only when an `ak_` key is present. Install with `pip install "arkleon[mcp]"`.
 
 ## What it returns, and what it does not
 

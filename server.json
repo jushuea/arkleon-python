@@ -1,0 +1,41 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.jushuea/arkleon",
+  "title": "Arkleon",
+  "description": "Point-in-time SEC EDGAR fundamentals: free fetch/parse helpers and a built-in MCP server.",
+  "version": "0.1.2",
+  "websiteUrl": "https://arkleon.com",
+  "repository": {
+    "url": "https://github.com/jushuea/arkleon-python",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "arkleon",
+      "version": "0.1.2",
+      "runtimeHint": "uvx",
+      "runtimeArguments": [
+        {
+          "type": "named",
+          "name": "--from",
+          "value": "arkleon",
+          "description": "run the arkleon-mcp console script from the arkleon package"
+        }
+      ],
+      "packageArguments": [],
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "ARKLEON_API_KEY",
+          "description": "Optional ak_ key. Unlocks the paid /v1 tools; the free EDGAR tools need no key.",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
