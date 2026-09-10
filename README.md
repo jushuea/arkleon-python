@@ -1,8 +1,7 @@
 # arkleon
 <!-- mcp-name: io.github.jushuea/arkleon -->
 
-Point-in-time SEC EDGAR fundamentals: free EDGAR fetch/parse helpers with zero
-credentials, plus an optional certified `/v1` client and a built-in MCP server.
+arkleon is the free client for Arkleon's point-in-time SEC fundamentals: filing-dated facts straight from EDGAR with no key, and an optional API client for the certified corpus (16,811 companies, 426,003 filings, 181,350,662 facts) with replayable as_of queries.
 
 The free EDGAR core requires no account and no API key. The optional paid `/v1`
 client and the corpus-backed point-in-time features are the only parts that need
