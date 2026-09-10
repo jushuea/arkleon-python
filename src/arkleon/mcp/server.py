@@ -21,10 +21,17 @@ from mcp.server.stdio import stdio_server
 
 from .tools import ToolSpec, free_tool_specs, paid_tool_specs
 
+# Import the package version so the handshake never carries a hand-copied literal.
+from arkleon import __version__
+
 __all__ = ["build_server", "main", "SERVER_NAME", "SERVER_VERSION"]
 
 SERVER_NAME = "arkleon"
-SERVER_VERSION = "0.1.0"
+# Single-source the advertised version from the package (arkleon.__version__),
+# the same anchor pyproject's hatch version and server.json (guarded by
+# tests/test_version_parity.py) derive from. The MCP registry reads this from the
+# handshake, so it must agree with the released version; never re-copy it here.
+SERVER_VERSION = __version__
 
 
 def _select_specs(api_key: str | None) -> tuple[list[ToolSpec], str | None]:

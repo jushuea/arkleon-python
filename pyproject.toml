@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "arkleon"
-version = "0.1.2"
+dynamic = ["version"]
 description = "Point-in-time SEC EDGAR fundamentals: free fetch/parse helpers, an optional certified /v1 client, and a built-in MCP server."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -48,6 +48,9 @@ Repository = "https://github.com/jushuea/arkleon-python"
 
 [project.scripts]
 arkleon-mcp = "arkleon.mcp.server:main"
+
+[tool.hatch.version]
+path = "src/arkleon/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/arkleon"]
