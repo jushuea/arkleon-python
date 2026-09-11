@@ -123,9 +123,9 @@ look-ahead bias.
 
 ## The certified corpus (paid)
 
-The paid `/v1` client serves the certified corpus. Per
-`docs/data-layer/api-v1-contract.md` Appendix A, which is the sole authority for
-what any surface may state, the claimable figures are:
+The paid `/v1` client serves the certified corpus. Per the `/v1` API contract at
+https://arkleon.com/docs, which is the sole authority for what any surface may
+state, the claimable figures are:
 
 | Quantity | Figure | Kind |
 |---|---|---|
@@ -173,7 +173,7 @@ MIT. See [LICENSE](LICENSE).
 
 ## Links
 
-- **`/v1` API contract:** `docs/data-layer/api-v1-contract.md` (Appendix A is the
-  authority for the corpus figures above).
+- **`/v1` API contract:** https://arkleon.com/docs (the authority for the corpus
+  figures above).
 - **Issues and contributing:** https://github.com/jushuea/arkleon-python
 - **SEC fair-access policy:** https://www.sec.gov/os/accessing-edgar-data
