@@ -166,6 +166,72 @@ def test_single_page_data_strips_internal_fields() -> None:
     assert page.as_of == "2024-01-01"
 
 
+def test_revisions_query_params_shaped() -> None:
+    captured: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json={"data": [], "next_cursor": None})
+
+    client = _client(handler, captured)
+    client.revisions(cik=320193, concept="Assets", as_of="2021-12-31")
+
+    request = captured[0]
+    params = request.url.params
+    assert request.url.path.endswith("/revisions")
+    assert params.get("cik") == "320193"
+    assert params.get("concept") == "Assets"
+    assert params.get("as_of") == "2021-12-31"
+    assert params.get("limit") == "100"
+
+
+def test_revisions_parses_recorded_response() -> None:
+    recorded_response = {
+        "data": [
+            {
+                "val": 320000000000,
+                "filed": "2020-10-30",
+                "accession_id": "0000320193-20-000096",
+                "form": "10-K",
+                "event_type": "AMENDMENT",
+                "supersedes_accn": None,
+                "superseded_by_accn": "0000320193-21-000105",
+            },
+            {
+                "val": 351002000000,
+                "filed": "2021-10-29",
+                "accession_id": "0000320193-21-000105",
+                "form": "10-K",
+                "event_type": "RESTATED_COMPARATIVE",
+                "supersedes_accn": "0000320193-20-000096",
+                "superseded_by_accn": None,
+            },
+        ],
+        "next_cursor": None,
+    }
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=recorded_response)
+
+    client = _client(handler)
+    page = client.revisions(cik=320193, concept="Assets")
+
+    assert len(page.data) == 2
+    assert page.data[0]["event_type"] == "AMENDMENT"
+    assert page.data[0]["superseded_by_accn"] == "0000320193-21-000105"
+
+
+def test_revisions_requires_cik() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:  # pragma: no cover
+        raise AssertionError("no request should be sent when cik is invalid")
+
+    client = _client(handler)
+    with pytest.raises(api.RequestError):
+        client.revisions(cik=None)  # type: ignore[arg-type]
+    # cik is keyword-only with no default: omitting it is a TypeError.
+    with pytest.raises(TypeError):
+        client.revisions()  # type: ignore[call-arg]
+
+
 def test_error_from_envelope_mapping() -> None:
     rate = api.error_from_envelope(
         429,

@@ -51,7 +51,7 @@ def _strip_internal(record: Any) -> Any:
 
 
 class DataClient:
-    """Client for the three /v1 endpoints: facts, filings, companies."""
+    """Client for the four /v1 endpoints: facts, filings, companies, revisions."""
 
     def __init__(
         self,
@@ -342,6 +342,50 @@ class DataClient:
             "cursor": cursor,
         }
         return self._page("/companies", params, as_of=None)
+
+    # -- /v1/revisions -----------------------------------------------------
+
+    def revisions(
+        self,
+        *,
+        cik: int,
+        concept: str | None = None,
+        as_of: str | None = None,
+        limit: int = 100,
+        cursor: str | None = None,
+    ) -> Page:
+        """GET /v1/revisions: filing-dated revision events for one CIK.
+
+        ``cik`` is REQUIRED because this endpoint has no corpus-wide revision
+        scan. ``concept`` is the concept filter, not the ``tag`` filter used by
+        facts(). ``as_of`` is optional here and filters on filed date. Cursor
+        pagination resends the same ``as_of`` on every page (contract section
+        2.5.1). ``ticker`` is not served; the server returns 501 as
+        NotServedError. See contract section 2.5.
+        """
+        if cik is None:
+            raise RequestError(
+                "cik is required on revisions() and has no default (contract "
+                "section 2.5.1); there is no corpus-wide revision scan.",
+                error="invalid_request",
+            )
+        params: dict[str, Any] = {
+            "cik": cik,
+            "concept": concept,
+            "as_of": as_of,
+            "limit": limit,
+            "cursor": cursor,
+        }
+        return self._page("/revisions", params, as_of=as_of)
+
+    def revisions_iter(self, **kwargs: Any) -> Iterator[dict[str, Any]]:
+        """Iterate every revision event across pages, resending the same as_of."""
+        kwargs.pop("cursor", None)
+
+        def fetch(cursor: str | None) -> Page:
+            return self.revisions(cursor=cursor, **kwargs)
+
+        return paginate(fetch)
 
     # -- opt-in, non-point-in-time convenience -----------------------------
 
