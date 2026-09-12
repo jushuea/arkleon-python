@@ -39,6 +39,10 @@ for fact in assets.as_of("2020-01-01"):        # keep only filed <= 2020-01-01
 
 ## Quickstart: optional paid `/v1` client (certified point-in-time)
 
+The free `/v1` tier allows 500 requests / day.
+
+A `concept_alias` parameter (plain-language concept names over raw us-gaap tags) is reserved and available after /v1 ships it.
+
 ```python
 # pip install "arkleon[api]"
 from arkleon.api import DataClient
