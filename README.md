@@ -1,5 +1,6 @@
 # arkleon
 <!-- mcp-name: io.github.jushuea/arkleon -->
+<!-- mcp-name: com.arkleon/arkleon -->
 
 arkleon is the free client for Arkleon's point-in-time SEC fundamentals: filing-dated facts straight from EDGAR with no key, and an optional API client for the certified corpus (16,811 companies, 426,003 filings, 181,350,662 facts) with replayable as_of queries.
 
