@@ -1,0 +1,1 @@
+Recorded from https://data.sec.gov/api/xbrl/companyconcept/ for CIK 0000320193 (Assets, NetIncomeLoss) on 2026-09-27. Served to EdgarClient through httpx.MockTransport in tests/test_integrations.py.

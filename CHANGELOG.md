@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5] - 2026-09-27
+
+### Added
+
+- `arkleon.integrations.langchain.ArkleonEdgarFactsTool`, a LangChain tool over `EdgarClient.concept(...).as_of(...)` (extra: `langchain`).
+- `arkleon.integrations.llamaindex.ArkleonEdgarFactsReader`, a LlamaIndex reader over the same call (extra: `llamaindex`).
+
 ## [0.1.4] - 2026-09-27
 
 ### Added

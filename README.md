@@ -108,6 +108,39 @@ the official MCP registry under the name `io.github.jushuea/arkleon`. It launche
 over stdio as `arkleon-mcp`; the free EDGAR tools register unconditionally and the
 paid tools only when an `ak_` key is present. Install with `pip install "arkleon[mcp]"`.
 
+## LangChain and LlamaIndex
+
+Both integrations wrap the free `EdgarClient` and need no Arkleon key. The SEC requires a descriptive User-Agent, so pass `user_agent`, pass `client=EdgarClient(...)`, or set `SEC_EDGAR_USER_AGENT`.
+
+```bash
+pip install "arkleon[langchain]"
+pip install "arkleon[llamaindex]"
+```
+
+`ArkleonEdgarFactsTool` is a LangChain tool named `arkleon_edgar_facts`. Arguments are `cik`, `tag`, a required `as_of` in YYYY-MM-DD form, and `taxonomy`, which defaults to `us-gaap`.
+
+```python
+from arkleon.integrations.langchain import ArkleonEdgarFactsTool
+
+tool = ArkleonEdgarFactsTool(user_agent="Name email@example.com")
+result = tool.invoke({"cik": 320193, "tag": "Assets", "as_of": "2020-01-01"})
+print(result["facts"][0]["value"])
+```
+
+It returns a dict with `cik`, `tag`, `taxonomy`, `as_of`, `warning` and `facts`. Each fact has `period_start`, `period_end`, `value`, `unit`, `form`, `filed`, `accession`, `instantaneous` and the other `Fact` fields.
+
+`ArkleonEdgarFactsReader` is a LlamaIndex reader. `load_data` returns 1 `Document` per fact, with the fact fields plus `cik`, `tag`, `taxonomy`, `as_of` and `warning` in its metadata.
+
+```python
+from arkleon.integrations.llamaindex import ArkleonEdgarFactsReader
+
+reader = ArkleonEdgarFactsReader(user_agent="Name email@example.com")
+docs = reader.load_data(cik=320193, tag="Assets", as_of="2020-01-01")
+print(docs[0].metadata["filed"])
+```
+
+`as_of` keeps only facts filed on or before that date, which is best-effort over live EDGAR and not certified, and every result carries that warning. Neither integration wraps the paid `/v1` `DataClient`.
+
 ## What it returns, and what it does not
 
 **Returns:** as-reported numeric XBRL facts, filing and company metadata, and the
@@ -167,6 +200,8 @@ free snapshot. Address facts by CIK.
 | `arkleon[api]` | The optional paid `/v1` `DataClient`. Requires an `ak_` key at runtime. |
 | `arkleon[mcp]` | The built-in MCP server and the `arkleon-mcp` console script. |
 | `arkleon[pandas]` | Optional pandas DataFrame adapters for the free core. Never required. |
+| `arkleon[langchain]` | The `ArkleonEdgarFactsTool` LangChain tool and its `langchain-core` dependency. |
+| `arkleon[llamaindex]` | The `ArkleonEdgarFactsReader` LlamaIndex reader and its `llama-index-core` dependency. |
 | `arkleon[all]` | Convenience union of `api`, `mcp`, and `pandas`. |
 
 Base plus `[pandas]` stays fully free and credential-free. `[api]` and the paid

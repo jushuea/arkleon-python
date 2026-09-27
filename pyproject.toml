@@ -39,6 +39,8 @@ classifiers = [
 api = ["httpx>=0.27"]
 mcp = ["mcp>=1.9"]
 pandas = ["pandas>=2.0"]
+langchain = ["langchain-core>=0.3"]
+llamaindex = ["llama-index-core>=0.12"]
 all = ["httpx>=0.27", "mcp>=1.9", "pandas>=2.0"]
 
 [project.urls]

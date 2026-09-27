@@ -3,7 +3,7 @@
   "name": "io.github.jushuea/arkleon",
   "title": "Arkleon",
   "description": "Point-in-time SEC EDGAR fundamentals: free fetch/parse helpers and a built-in MCP server.",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "websiteUrl": "https://arkleon.com",
   "repository": {
     "url": "https://github.com/jushuea/arkleon-python",
@@ -14,7 +14,7 @@
       "registryType": "pypi",
       "registryBaseUrl": "https://pypi.org",
       "identifier": "arkleon",
-      "version": "0.1.4",
+      "version": "0.1.5",
       "runtimeHint": "uvx",
       "runtimeArguments": [
         {
