@@ -20,7 +20,7 @@
         {
           "type": "named",
           "name": "--from",
-          "value": "arkleon",
+          "value": "arkleon[mcp]",
           "description": "run the arkleon-mcp console script from the arkleon package"
         }
       ],

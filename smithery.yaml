@@ -8,6 +8,6 @@ startCommand:
         description: "Optional ak_ key; the free EDGAR tools need no key."
     required: []
   commandFunction: |-
-    (config) => ({ command: 'uvx', args: ['--from','arkleon','arkleon-mcp'], env: config.apiKey ? { ARKLEON_API_KEY: config.apiKey } : {} })
+    (config) => ({ command: 'uvx', args: ['--from','arkleon[mcp]','arkleon-mcp'], env: config.apiKey ? { ARKLEON_API_KEY: config.apiKey } : {} })
   exampleConfig:
     apiKey: ak_example
