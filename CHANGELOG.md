@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.6] - 2026-10-03
+
+- Added `arkleon.quantconnect` snapshot preparation using datetime `/v1/facts` queries, acceptance and filing-date guards, and consolidated as-filed selection.
+- Added a Lean `PythonData` adapter that reads prepared local snapshots and retains filing provenance.
+- Added pagination validity metadata so snapshot preparation can reject malformed response envelopes.
+
 ## [0.1.5] - 2026-09-27
 
 ### Added

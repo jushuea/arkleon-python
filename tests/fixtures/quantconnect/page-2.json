@@ -1,0 +1,53 @@
+{
+  "data": [
+    {
+      "accession_id": "0001628280-21-008318",
+      "tag": "NetIncomeLoss",
+      "taxonomy": "us-gaap/2019",
+      "period_end": "2020-12-31",
+      "duration_quarters": 4,
+      "unit": "USD",
+      "segments": "",
+      "coreg": "",
+      "value": -327300000,
+      "form": "10-K/A",
+      "filed": "2021-04-30",
+      "cik": 1674101,
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828021008318/",
+      "accepted_at": "2021-04-30T13:57:00Z"
+    },
+    {
+      "accession_id": "0001628280-21-008318",
+      "tag": "NetIncomeLoss",
+      "taxonomy": "us-gaap/2019",
+      "period_end": "2020-12-31",
+      "duration_quarters": 4,
+      "unit": "USD",
+      "segments": "Restatement=ScenarioPreviouslyReported;",
+      "coreg": "",
+      "value": -183600000,
+      "form": "10-K/A",
+      "filed": "2021-04-30",
+      "cik": 1674101,
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828021008318/",
+      "accepted_at": "2021-04-30T13:57:00Z"
+    },
+    {
+      "accession_id": "0001628280-21-008318",
+      "tag": "NetIncomeLoss",
+      "taxonomy": "us-gaap/2019",
+      "period_end": "2020-12-31",
+      "duration_quarters": 4,
+      "unit": "USD",
+      "segments": "Restatement=RevisionOfPriorPeriodErrorCorrectionAdjustment;",
+      "coreg": "",
+      "value": -143700000,
+      "form": "10-K/A",
+      "filed": "2021-04-30",
+      "cik": 1674101,
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828021008318/",
+      "accepted_at": "2021-04-30T13:57:00Z"
+    }
+  ],
+  "next_cursor": null
+}

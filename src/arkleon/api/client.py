@@ -161,6 +161,13 @@ class DataClient:
             raise error_from_envelope(
                 502, {"error": "internal_error", "message": "Malformed response body"}
             )
+        payload["_pagination_valid"] = (
+            isinstance(payload.get("data"), list)
+            and "next_cursor" in payload
+            and (payload["next_cursor"] is None or (
+                isinstance(payload["next_cursor"], str) and bool(payload["next_cursor"])
+            ))
+        )
         data = payload.get("data", [])
         if not isinstance(data, list):
             data = []
@@ -179,6 +186,7 @@ class DataClient:
             next_cursor=next_cursor,
             as_of=as_of,
             request=request_context,
+            pagination_valid=payload["_pagination_valid"],
         )
 
     # -- /v1/facts ---------------------------------------------------------
