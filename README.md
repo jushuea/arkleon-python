@@ -110,6 +110,8 @@ paid tools only when an `ak_` key is present. Install with `pip install "arkleon
 
 ## LangChain and LlamaIndex
 
+For QuantConnect local snapshots, see the [QuantConnect integration guide](docs/quantconnect.md).
+
 Both integrations wrap the free `EdgarClient` and need no Arkleon key. The SEC requires a descriptive User-Agent, so pass `user_agent`, pass `client=EdgarClient(...)`, or set `SEC_EDGAR_USER_AGENT`.
 
 ```bash

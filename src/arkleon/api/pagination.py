@@ -32,6 +32,9 @@ class Page:
     next_cursor: str | None
     as_of: str | None = None
     request: dict[str, Any] = field(default_factory=dict)
+    # False when transport normalization concealed a malformed page envelope.
+    # Existing callers retain their data/cursor behavior; strict loaders fail.
+    pagination_valid: bool = True
 
 
 def paginate(fetch_page: Callable[[str | None], Page]) -> Iterator[Any]:
