@@ -19,7 +19,7 @@ class NoLean(importlib.abc.MetaPathFinder):
 sys.meta_path.insert(0, NoLean())
 import arkleon
 import arkleon.quantconnect as qc
-assert arkleon.__version__ == '0.1.6'
+assert arkleon.__version__ == '0.1.7'
 assert callable(qc.prepare_snapshot)
 assert callable(qc.visible_as_filed)
 assert 'arkleon.quantconnect.data' not in sys.modules

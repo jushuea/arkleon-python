@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "accession_id": "0000000001-24-000001",
+      "tag": "Revenues",
+      "taxonomy": "us-gaap/2024",
+      "period_end": "2024-03-31",
+      "duration_quarters": 1,
+      "unit": "USD",
+      "segments": "",
+      "coreg": "",
+      "value": 100,
+      "form": "10-Q",
+      "filed": "2024-04-30",
+      "cik": 1,
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1/000000000124000001/",
+      "matched_tag": "us-gaap:Revenues"
+    }
+  ],
+  "next_cursor": null,
+  "concept": {
+    "alias": "revenue",
+    "provisional": false,
+    "tags": ["us-gaap:Revenues"],
+    "note": "test"
+  }
+}

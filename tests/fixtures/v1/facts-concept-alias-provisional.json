@@ -1,0 +1,27 @@
+{
+  "data": [
+    {
+      "accession_id": "0000000002-24-000002",
+      "tag": "NetIncomeLoss",
+      "taxonomy": "us-gaap/2024",
+      "period_end": "2024-03-31",
+      "duration_quarters": 1,
+      "unit": "USD",
+      "segments": "",
+      "coreg": "",
+      "value": 40,
+      "form": "10-Q",
+      "filed": "2024-05-02",
+      "cik": 2,
+      "source_url": "https://www.sec.gov/Archives/edgar/data/2/000000000224000002/",
+      "matched_tag": "us-gaap:NetIncomeLoss"
+    }
+  ],
+  "next_cursor": null,
+  "concept": {
+    "alias": "net_income",
+    "provisional": true,
+    "tags": ["us-gaap:NetIncomeLoss"],
+    "note": "Net income attributable to the reporting entity. This alias is PROVISIONAL: its tag mapping has not been fully grounded against the corpus and may change."
+  }
+}

@@ -42,7 +42,9 @@ for fact in assets.as_of("2020-01-01"):        # keep only filed <= 2020-01-01
 
 The free `/v1` tier allows 500 requests / day.
 
-A `concept_alias` parameter (plain-language concept names over raw us-gaap tags) is reserved and available after /v1 ships it.
+`concept_alias` is accepted on `facts()`: it takes a plain-language concept name, such as `revenue`, in place of a raw us-gaap `tag`, and it cannot be combined with `tag`.
+
+The response also carries a top-level concept object with the alias as supplied, a provisional flag, the ordered tag set, and a note. A provisional alias is still served. Its note states that the tag mapping has not been fully grounded against the corpus and may change.
 
 ```python
 # pip install "arkleon[api]"
@@ -52,10 +54,17 @@ client = DataClient(api_key="ak_...")          # or ARKLEON_API_KEY env
 page = client.facts(cik=320193, tag="Assets", as_of="2020-01-01")
 for fact in page.data:
     print(fact["period_end"], fact["value"], fact.get("source_url"))
+
+# concept_alias in place of tag, never both; each fact carries matched_tag:
+page = client.facts(cik=320193, concept_alias="revenue", as_of="2020-01-01")
+print(page.concept["provisional"])
 ```
 
 *Certified corpus. `as_of` required, filters on filing date, identical query +
 `as_of` returns identical data permanently.*
+
+- `client.ttm(...)` reads `/v1/ttm`: four fiscal quarters ending at an explicit `fiscal_year` and `fiscal_quarter`, filtered by `as_of`.
+- `client.identifiers(...)` reads `/v1/identifiers`: the ticker and CIK mappings in effect on `as_of`. History starts at the first daily snapshot, and a date before it returns an empty array.
 
 ## The free/paid boundary
 
@@ -112,7 +121,7 @@ paid tools only when an `ak_` key is present. Install with `pip install "arkleon
 
 For QuantConnect local snapshots, see the [QuantConnect integration guide](docs/quantconnect.md).
 
-Both integrations wrap the free `EdgarClient` and need no Arkleon key. The SEC requires a descriptive User-Agent, so pass `user_agent`, pass `client=EdgarClient(...)`, or set `SEC_EDGAR_USER_AGENT`.
+There are two pairs. The free pair, `ArkleonEdgarFactsTool` and `ArkleonEdgarFactsReader`, wraps the free `EdgarClient` and needs no Arkleon key. The SEC requires a descriptive User-Agent, so pass `user_agent`, pass `client=EdgarClient(...)`, or set `SEC_EDGAR_USER_AGENT`. The certified pair, `ArkleonDataFactsTool` and `ArkleonDataFactsReader`, wraps the paid `/v1` `DataClient` and needs an `ak_` key.
 
 ```bash
 pip install "arkleon[langchain]"
@@ -141,7 +150,17 @@ docs = reader.load_data(cik=320193, tag="Assets", as_of="2020-01-01")
 print(docs[0].metadata["filed"])
 ```
 
-`as_of` keeps only facts filed on or before that date, which is best-effort over live EDGAR and not certified, and every result carries that warning. Neither integration wraps the paid `/v1` `DataClient`.
+For the free pair, `as_of` keeps only facts filed on or before that date, which is best-effort over live EDGAR and not certified, and every result carries that warning.
+
+`ArkleonDataFactsTool` is a LangChain tool named `arkleon_data_facts`, in `arkleon.integrations.langchain_data`. `ArkleonDataFactsReader` is a LlamaIndex reader, in `arkleon.integrations.llamaindex_data`. Both take `cik`, a required `as_of`, `tag` or `concept_alias`, and the other `facts()` filters, read the certified corpus through `DataClient.facts`, and carry no best-effort warning. The tool returns a dict with `as_of`, `data` and `next_cursor`; `load_data` returns 1 `Document` per fact, with the fact fields plus `as_of` in its metadata. `Page.concept` holds the server's `concept` object, and the `pit_facts` MCP tool passes `concept` on. With `concept_alias`, the tool's dict also carries `concept`, and each `Document`'s metadata also carries `concept_alias`, `concept_provisional` and `concept_note`. Without an `ak_` key, passed as `api_key` or set in `ARKLEON_API_KEY`, both raise `AuthError` when constructed.
+
+```python
+from arkleon.integrations.langchain_data import ArkleonDataFactsTool
+
+tool = ArkleonDataFactsTool(api_key="ak_...")          # or ARKLEON_API_KEY env
+result = tool.invoke({"cik": 320193, "concept_alias": "revenue", "as_of": "2020-01-01"})
+print(result["data"][0]["matched_tag"])
+```
 
 ## What it returns, and what it does not
 

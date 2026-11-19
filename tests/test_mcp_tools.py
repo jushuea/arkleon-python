@@ -77,3 +77,34 @@ def test_paid_tool_descriptions_claim_certified_reproducible() -> None:
         assert "permanently reproducible" in description, (
             f"{spec.name} lacks a permanently-reproducible caveat"
         )
+
+
+def test_pit_facts_forwards_concept_alias(monkeypatch) -> None:
+    from arkleon.api import Page
+    import arkleon.mcp.tools as tools
+
+    class StubClient:
+        def __init__(self):
+            self.kwargs = {}
+
+        def facts(self, **kwargs):
+            self.kwargs = kwargs
+            return Page(data=[], next_cursor=None, as_of=kwargs["as_of"])
+
+    client = StubClient()
+    monkeypatch.setattr(tools, "_paid_client", lambda api_key: client)
+    spec = next(spec for spec in tools.paid_tool_specs() if spec.name == "pit_facts")
+    spec.handler(
+        {"as_of": "2024-01-01", "cik": 320193, "concept_alias": "revenue"},
+        api_key="ak_test",
+    )
+
+    assert client.kwargs["concept_alias"] == "revenue"
+    assert client.kwargs["tag"] is None
+
+
+def test_pit_facts_schema_includes_concept_alias() -> None:
+    spec = next(spec for spec in mcp.paid_tool_specs() if spec.name == "pit_facts")
+
+    assert spec.input_schema["properties"]["concept_alias"]["type"] == "string"
+    assert spec.input_schema["required"] == ["as_of"]

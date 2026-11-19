@@ -51,7 +51,7 @@ def _strip_internal(record: Any) -> Any:
 
 
 class DataClient:
-    """Client for the four /v1 endpoints: facts, filings, companies, revisions."""
+    """Client for the six /v1 endpoints: facts, filings, companies, revisions, ttm, identifiers."""
 
     def __init__(
         self,
@@ -109,14 +109,16 @@ class DataClient:
         # is passed through untouched and never parsed (section 2.1.3).
         return {key: value for key, value in params.items() if value is not None}
 
-    def _request(self, path: str, params: dict[str, Any]) -> dict[str, Any]:
+    def _request(
+        self, path: str, params: dict[str, Any], *, paged: bool = True
+    ) -> dict[str, Any]:
         url = f"{self._base_url}{path}"
         cleaned = self._clean_params(params)
         attempts = self._max_rate_limit_retries + 1
         for attempt in range(attempts):
             response = self._client.get(url, params=cleaned, headers=self._headers())
             if response.status_code < 400:
-                return self._parse_success(response)
+                return self._parse_success(response, paged=paged)
             exception = self._exception_for(response)
             if (
                 isinstance(exception, RateLimitError)
@@ -150,7 +152,9 @@ class DataClient:
                     exception.retry_after = None
         return exception
 
-    def _parse_success(self, response: httpx.Response) -> dict[str, Any]:
+    def _parse_success(
+        self, response: httpx.Response, *, paged: bool = True
+    ) -> dict[str, Any]:
         try:
             payload = response.json()
         except ValueError as error:
@@ -161,6 +165,8 @@ class DataClient:
             raise error_from_envelope(
                 502, {"error": "internal_error", "message": "Malformed response body"}
             )
+        if not paged:
+            return _strip_internal(payload)
         payload["_pagination_valid"] = (
             isinstance(payload.get("data"), list)
             and "next_cursor" in payload
@@ -181,12 +187,15 @@ class DataClient:
         request_context = {
             key: value for key, value in self._clean_params(params).items() if key != "cursor"
         }
+        concept = payload.get("concept")
+        concept = _strip_internal(concept) if isinstance(concept, dict) else None
         return Page(
             data=list(payload["data"]),
             next_cursor=next_cursor,
             as_of=as_of,
             request=request_context,
             pagination_valid=payload["_pagination_valid"],
+            concept=concept,
         )
 
     # -- /v1/facts ---------------------------------------------------------
@@ -197,6 +206,7 @@ class DataClient:
         as_of: str,
         cik: int | None = None,
         tag: str | None = None,
+        concept_alias: str | None = None,
         taxonomy: str | None = None,
         period_start: str | None = None,
         period_end: str | None = None,
@@ -222,6 +232,14 @@ class DataClient:
         in v1: the request is forwarded and the server's 501 surfaces as
         NotServedError, never a silent free-core resolution (contract section
         2.3.1, spec section 6.4). Address facts by ``cik``.
+
+        ``concept_alias`` names a plain-language concept that the server maps to
+        an ordered set of as-filed tags, and adds ``matched_tag`` to each returned
+        fact. It MUST NOT be combined with ``tag``; doing so raises RequestError
+        locally. An unknown alias is a 400 invalid_request from the server.
+
+        The returned Page carries the server's concept object in ``concept``
+        when concept_alias is supplied (None otherwise).
         """
         if as_of is None:
             raise RequestError(
@@ -234,10 +252,16 @@ class DataClient:
                 "cik and ticker must not both be supplied (contract section 2.1.2).",
                 error="invalid_request",
             )
+        if tag is not None and concept_alias is not None:
+            raise RequestError(
+                "concept_alias and tag are mutually exclusive (contract section 2.1.2.1).",
+                error="invalid_request",
+            )
         params: dict[str, Any] = {
             "as_of": as_of,
             "cik": cik,
             "tag": tag,
+            "concept_alias": concept_alias,
             "taxonomy": taxonomy,
             "period_start": period_start,
             "period_end": period_end,
@@ -258,6 +282,7 @@ class DataClient:
         as_of on a cursor request is a 400 the iterator prevents by
         construction (contract section 2.1.3). Any incoming ``cursor`` is
         ignored: iteration always starts from the beginning.
+        Iteration yields records only, so the concept object is read from facts().
         """
         kwargs.pop("cursor", None)
 
@@ -394,6 +419,95 @@ class DataClient:
             return self.revisions(cursor=cursor, **kwargs)
 
         return paginate(fetch)
+
+    # -- /v1/ttm -----------------------------------------------------------
+
+    def ttm(
+        self,
+        *,
+        cik: int,
+        tag: str,
+        taxonomy: str,
+        fiscal_year: int,
+        fiscal_quarter: int,
+        as_of: str,
+        unit: str | None = None,
+        segments: str | None = None,
+        coreg: str | None = None,
+    ) -> dict[str, Any]:
+        """GET /v1/ttm: four fiscal quarters ending at the explicit fiscal_year and fiscal_quarter.
+
+        ``as_of`` is REQUIRED. A date as_of selects filings filed on or before it
+        (filed <= as_of); a datetime as_of with an explicit offset selects
+        acceptance on or before it (accepted <= as_of). The response is a single
+        object, not a page: there is no limit or cursor.
+        """
+        if as_of is None:
+            raise RequestError(
+                "as_of is required on ttm() and has no default.",
+                error="invalid_request",
+            )
+        params: dict[str, Any] = {
+            "cik": cik,
+            "tag": tag,
+            "taxonomy": taxonomy,
+            "fiscal_year": fiscal_year,
+            "fiscal_quarter": fiscal_quarter,
+            "as_of": as_of,
+            "unit": unit,
+            "segments": segments,
+            "coreg": coreg,
+        }
+        return self._request("/ttm", params, paged=False)
+
+    # -- /v1/identifiers ---------------------------------------------------
+
+    def identifiers(
+        self,
+        *,
+        ticker: str | None = None,
+        cik: int | None = None,
+        as_of: str | None = None,
+        limit: int = 100,
+        cursor: str | None = None,
+    ) -> Page:
+        """GET /v1/identifiers: ticker and CIK mappings in effect on as_of.
+
+        Supply exactly one of ``ticker`` or ``cik``; supplying both or neither
+        raises RequestError locally. Returns every mapping in effect on as_of
+        (valid_from <= as_of < valid_to; a null valid_to is open). ``as_of``
+        defaults to the current UTC date on the server, and the returned Page's
+        as_of is the effective date the response echoes. History starts at the
+        first daily snapshot, and a date before it returns an empty array.
+        Resend the same as_of with a cursor.
+        """
+        if (ticker is None) == (cik is None):
+            raise RequestError(
+                "Supply exactly one of ticker or cik on identifiers().",
+                error="invalid_request",
+            )
+        params: dict[str, Any] = {
+            "ticker": ticker,
+            "cik": cik,
+            "as_of": as_of,
+            "limit": limit,
+            "cursor": cursor,
+        }
+        payload = self._request("/identifiers", params)
+        effective = payload.get("as_of")
+        effective = effective if isinstance(effective, str) else as_of
+        next_cursor = payload.get("next_cursor")
+        next_cursor = next_cursor if isinstance(next_cursor, str) else None
+        request_context = {
+            key: value for key, value in self._clean_params(params).items() if key != "cursor"
+        }
+        return Page(
+            data=list(payload["data"]),
+            next_cursor=next_cursor,
+            as_of=effective,
+            request=request_context,
+            pagination_valid=payload["_pagination_valid"],
+        )
 
     # -- opt-in, non-point-in-time convenience -----------------------------
 
