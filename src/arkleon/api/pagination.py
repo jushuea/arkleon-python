@@ -35,6 +35,8 @@ class Page:
     # False when transport normalization concealed a malformed page envelope.
     # Existing callers retain their data/cursor behavior; strict loaders fail.
     pagination_valid: bool = True
+    # The server's top-level concept object when concept_alias is supplied; None otherwise.
+    concept: dict[str, Any] | None = None
 
 
 def paginate(fetch_page: Callable[[str | None], Page]) -> Iterator[Any]:

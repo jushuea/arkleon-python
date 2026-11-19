@@ -26,15 +26,19 @@ FACT = {
 class StubClient:
     def __init__(self):
         self.facts_kwargs = None
-        self.facts_iter_kwargs = None
+        self.facts_calls = []
 
     def facts(self, **kwargs):
+        self.facts_calls.append(kwargs)
         self.facts_kwargs = kwargs
         return Page(data=[FACT], next_cursor="c1", as_of=kwargs["as_of"])
 
-    def facts_iter(self, **kwargs):
-        self.facts_iter_kwargs = kwargs
-        return iter([FACT])
+
+class ReaderStubClient(StubClient):
+    def facts(self, **kwargs):
+        self.facts_calls.append(kwargs)
+        self.facts_kwargs = kwargs
+        return Page(data=[FACT], next_cursor=None, as_of=kwargs["as_of"])
 
 
 @pytest.fixture
@@ -72,7 +76,7 @@ def test_tool_concept_alias(tool_class):
 def test_reader_tag(reader_class):
     from llama_index.core import Document
 
-    stub = StubClient()
+    stub = ReaderStubClient()
     docs = reader_class(client=stub).load_data(
         cik=320193, as_of="2024-01-01", tag="Assets"
     )
@@ -85,10 +89,11 @@ def test_reader_tag(reader_class):
         "Assets 123 USD for the period ending 2023-09-30, "
         "filed 2023-11-01 in 10-K 0000320193-23-000001"
     )
-    assert stub.facts_iter_kwargs["tag"] == "Assets"
-    assert stub.facts_iter_kwargs["concept_alias"] is None
-    assert stub.facts_iter_kwargs["cik"] == 320193
-    assert stub.facts_iter_kwargs["as_of"] == "2024-01-01"
+    assert stub.facts_calls[0]["tag"] == "Assets"
+    assert stub.facts_calls[0]["concept_alias"] is None
+    assert stub.facts_calls[0]["cik"] == 320193
+    assert stub.facts_calls[0]["as_of"] == "2024-01-01"
+    assert stub.facts_calls[0]["cursor"] is None
 
 
 def test_tool_requires_key(tool_class, monkeypatch):
@@ -130,7 +135,7 @@ def test_tool_forwards_filters(tool_class):
 
 
 def test_reader_forwards_filters(reader_class):
-    stub = StubClient()
+    stub = ReaderStubClient()
     params = {
         "cik": 320193,
         "as_of": "2024-01-01",
@@ -145,4 +150,4 @@ def test_reader_forwards_filters(reader_class):
         "limit": 25,
     }
     reader_class(client=stub).load_data(**params)
-    assert stub.facts_iter_kwargs == params
+    assert stub.facts_calls == [{**params, "cursor": None}]

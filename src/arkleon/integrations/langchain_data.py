@@ -96,4 +96,7 @@ class ArkleonDataFactsTool(BaseTool):
             limit=limit,
             cursor=cursor,
         )
-        return {"as_of": as_of, "data": page.data, "next_cursor": page.next_cursor}
+        result = {"as_of": as_of, "data": page.data, "next_cursor": page.next_cursor}
+        if page.concept is not None:
+            result["concept"] = page.concept
+        return result

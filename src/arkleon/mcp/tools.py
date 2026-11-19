@@ -153,7 +153,10 @@ def _handle_pit_facts(arguments: dict[str, Any], api_key: str | None = None) -> 
         limit=arguments.get("limit", 100),
         cursor=arguments.get("cursor"),
     )
-    return {"data": page.data, "next_cursor": page.next_cursor, "as_of": page.as_of}
+    result = {"data": page.data, "next_cursor": page.next_cursor, "as_of": page.as_of}
+    if page.concept is not None:
+        result["concept"] = page.concept
+    return result
 
 
 def _handle_pit_filings(arguments: dict[str, Any], api_key: str | None = None) -> Any:

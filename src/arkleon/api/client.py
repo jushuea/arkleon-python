@@ -187,12 +187,15 @@ class DataClient:
         request_context = {
             key: value for key, value in self._clean_params(params).items() if key != "cursor"
         }
+        concept = payload.get("concept")
+        concept = _strip_internal(concept) if isinstance(concept, dict) else None
         return Page(
             data=list(payload["data"]),
             next_cursor=next_cursor,
             as_of=as_of,
             request=request_context,
             pagination_valid=payload["_pagination_valid"],
+            concept=concept,
         )
 
     # -- /v1/facts ---------------------------------------------------------
@@ -234,6 +237,9 @@ class DataClient:
         an ordered set of as-filed tags, and adds ``matched_tag`` to each returned
         fact. It MUST NOT be combined with ``tag``; doing so raises RequestError
         locally. An unknown alias is a 400 invalid_request from the server.
+
+        The returned Page carries the server's concept object in ``concept``
+        when concept_alias is supplied (None otherwise).
         """
         if as_of is None:
             raise RequestError(
@@ -276,6 +282,7 @@ class DataClient:
         as_of on a cursor request is a 400 the iterator prevents by
         construction (contract section 2.1.3). Any incoming ``cursor`` is
         ignored: iteration always starts from the beginning.
+        Iteration yields records only, so the concept object is read from facts().
         """
         kwargs.pop("cursor", None)
 

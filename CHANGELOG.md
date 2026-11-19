@@ -7,6 +7,7 @@
 - Added the certified pair `arkleon.integrations.langchain_data.ArkleonDataFactsTool` and `arkleon.integrations.llamaindex_data.ArkleonDataFactsReader` over the paid `DataClient.facts` (extras: `langchain`, `llamaindex`; an `ak_` key is required).
 - The `pit_facts` MCP tool accepts `concept_alias`.
 - The README states that `concept_alias` is accepted, in place of the sentence that reserved it.
+- The `pit_facts` MCP tool passes `concept` on, `Page.concept` holds the server's `concept` object, and with `concept_alias` the tool's dict also carries `concept` while each `Document`'s metadata also carries `concept_alias`, `concept_provisional` and `concept_note`.
 
 ## [0.1.6] - 2026-10-03
 

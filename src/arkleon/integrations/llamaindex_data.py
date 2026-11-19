@@ -34,27 +34,44 @@ class ArkleonDataFactsReader(BaseReader):
         form: str | None = None,
         limit: int = 100,
     ) -> list[Document]:
-        facts = self._client.facts_iter(
-            as_of=as_of,
-            cik=cik,
-            tag=tag,
-            concept_alias=concept_alias,
-            taxonomy=taxonomy,
-            period_start=period_start,
-            period_end=period_end,
-            duration_quarters=duration_quarters,
-            unit=unit,
-            form=form,
-            limit=limit,
-        )
-        return [
-            Document(
-                text=(
-                    f"{fact.get('tag')} {fact.get('value')} {fact.get('unit')} "
-                    f"for the period ending {fact.get('period_end')}, "
-                    f"filed {fact.get('filed')} in {fact.get('form')} {fact.get('accession_id')}"
-                ),
-                metadata={**fact, "as_of": as_of},
+        documents: list[Document] = []
+        cursor: str | None = None
+        while True:
+            page = self._client.facts(
+                as_of=as_of,
+                cik=cik,
+                tag=tag,
+                concept_alias=concept_alias,
+                taxonomy=taxonomy,
+                period_start=period_start,
+                period_end=period_end,
+                duration_quarters=duration_quarters,
+                unit=unit,
+                form=form,
+                limit=limit,
+                cursor=cursor,
             )
-            for fact in facts
-        ]
+            concept = page.concept
+            extra = (
+                {
+                    "concept_alias": concept.get("alias"),
+                    "concept_provisional": concept.get("provisional"),
+                    "concept_note": concept.get("note"),
+                }
+                if concept is not None
+                else {}
+            )
+            for fact in page.data:
+                documents.append(
+                    Document(
+                        text=(
+                            f"{fact.get('tag')} {fact.get('value')} {fact.get('unit')} "
+                            f"for the period ending {fact.get('period_end')}, "
+                            f"filed {fact.get('filed')} in {fact.get('form')} {fact.get('accession_id')}"
+                        ),
+                        metadata={**fact, "as_of": as_of, **extra},
+                    )
+                )
+            cursor = page.next_cursor
+            if not cursor:
+                return documents
