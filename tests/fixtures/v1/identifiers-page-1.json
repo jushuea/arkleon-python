@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "cik": 1,
+      "ticker": "TEST",
+      "exchange": "Nasdaq",
+      "company_name": "Synthetic Company One",
+      "valid_from": "2024-01-01",
+      "valid_to": null,
+      "source": "sec_company_tickers_exchange",
+      "point_in_time": true
+    }
+  ],
+  "next_cursor": "c1",
+  "as_of": "2024-06-28"
+}

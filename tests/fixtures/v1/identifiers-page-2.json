@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "cik": 2,
+      "ticker": "TEST",
+      "exchange": "NYSE",
+      "company_name": "Synthetic Company Two",
+      "valid_from": "2024-02-01",
+      "valid_to": null,
+      "source": "sec_company_tickers_exchange",
+      "point_in_time": true
+    }
+  ],
+  "next_cursor": null,
+  "as_of": "2024-06-28"
+}

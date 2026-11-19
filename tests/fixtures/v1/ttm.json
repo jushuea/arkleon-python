@@ -1,0 +1,87 @@
+{
+  "cik": 1,
+  "tag": "Revenues",
+  "taxonomy": "us-gaap/2024",
+  "fiscal_year": 2024,
+  "fiscal_quarter": 4,
+  "as_of": "2025-02-28",
+  "period_end": "2024-12-31",
+  "unit": "USD",
+  "segments": "",
+  "coreg": "",
+  "value": 1000,
+  "derivation": [
+    {
+      "fiscal_year": 2024,
+      "fiscal_quarter": 1,
+      "period_end": "2024-03-31",
+      "method": "reported",
+      "value": 100,
+      "sources": [
+        {
+          "accession_id": "0000000001-24-000001",
+          "period_end": "2024-03-31",
+          "duration_quarters": 1,
+          "value": 100,
+          "form": "10-Q",
+          "filed": "2024-04-30",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1/000000000124000001/"
+        }
+      ]
+    },
+    {
+      "fiscal_year": 2024,
+      "fiscal_quarter": 2,
+      "period_end": "2024-06-30",
+      "method": "reported",
+      "value": 200,
+      "sources": [
+        {
+          "accession_id": "0000000001-24-000002",
+          "period_end": "2024-06-30",
+          "duration_quarters": 1,
+          "value": 200,
+          "form": "10-Q",
+          "filed": "2024-07-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1/000000000124000002/"
+        }
+      ]
+    },
+    {
+      "fiscal_year": 2024,
+      "fiscal_quarter": 3,
+      "period_end": "2024-09-30",
+      "method": "reported",
+      "value": 300,
+      "sources": [
+        {
+          "accession_id": "0000000001-24-000003",
+          "period_end": "2024-09-30",
+          "duration_quarters": 1,
+          "value": 300,
+          "form": "10-Q",
+          "filed": "2024-10-31",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1/000000000124000003/"
+        }
+      ]
+    },
+    {
+      "fiscal_year": 2024,
+      "fiscal_quarter": 4,
+      "period_end": "2024-12-31",
+      "method": "reported",
+      "value": 400,
+      "sources": [
+        {
+          "accession_id": "0000000001-25-000001",
+          "period_end": "2024-12-31",
+          "duration_quarters": 1,
+          "value": 400,
+          "form": "10-K",
+          "filed": "2025-02-15",
+          "source_url": "https://www.sec.gov/Archives/edgar/data/1/000000000125000001/"
+        }
+      ]
+    }
+  ]
+}
