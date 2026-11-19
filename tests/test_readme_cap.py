@@ -9,9 +9,10 @@ def test_readme_states_free_v1_cap():
     assert "The free `/v1` tier allows 500 requests / day." in text
 
 
-def test_readme_reserves_concept_alias():
+def test_readme_states_concept_alias():
     text = README.read_text(encoding="utf-8")
-    assert "concept_alias" in text and "available after /v1 ships it" in text
+    assert "`concept_alias` is accepted on `facts()`: it takes a plain-language concept name, such as `revenue`, in place of a raw us-gaap `tag`, and it cannot be combined with `tag`." in text
+    assert "available after /v1 ships it" not in text
 
 
 def test_readme_no_stale_100_per_day():
