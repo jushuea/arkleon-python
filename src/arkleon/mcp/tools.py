@@ -142,6 +142,7 @@ def _handle_pit_facts(arguments: dict[str, Any], api_key: str | None = None) -> 
         as_of=arguments["as_of"],
         cik=arguments.get("cik"),
         tag=arguments.get("tag"),
+        concept_alias=arguments.get("concept_alias"),
         taxonomy=arguments.get("taxonomy"),
         period_start=arguments.get("period_start"),
         period_end=arguments.get("period_end"),
@@ -363,6 +364,11 @@ def paid_tool_specs() -> list[ToolSpec]:
                         "not-served error. Address by cik.",
                     },
                     "tag": {"type": "string", "description": "XBRL element, e.g. Assets."},
+                    "concept_alias": {
+                        "type": "string",
+                        "description": "Plain-language concept mapped to ordered as-filed tags. "
+                        "Mutually exclusive with tag.",
+                    },
                     "taxonomy": {"type": "string", "description": "Taxonomy, e.g. us-gaap/2024."},
                     "period_start": {"type": "string", "description": "Lower bound on period end."},
                     "period_end": {"type": "string", "description": "Upper bound on period end."},
