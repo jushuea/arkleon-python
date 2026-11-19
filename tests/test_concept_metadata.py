@@ -50,7 +50,7 @@ def test_facts_without_concept_has_no_metadata() -> None:
     body = _fixture()
     del body["concept"]
     with _client(lambda request: httpx.Response(200, json=body)) as client:
-        page = client.facts(as_of=AS_OF, cik=2, concept_alias="net_income")
+        page = client.facts(as_of=AS_OF, cik=2, tag="NetIncomeLoss")
 
     assert page.concept is None
 
