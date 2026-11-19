@@ -118,7 +118,7 @@ def load_constants(plan_path=None):
             raise ValueError('invalid confidence or rate limits')
         worst = (2 + c.EXTRA_PAGES_PER_FACT) * c.ATTEMPTS_PER_PAGE
         available = c.ATTEMPT_CEILING - c.RESERVE
-        if c.N != c.FILINGS_PER_QUARTER * len(c.QUARTERS) or c.N > 3400:
+        if c.N != c.FILINGS_PER_QUARTER * len(c.QUARTERS):
             raise ValueError('N does not satisfy the draw sizing rules')
         if c.N * worst + c.ATTEMPTS_PER_PAGE > available:
             raise ValueError('allocation exceeds available attempt budget')
@@ -961,7 +961,6 @@ def audit(c, handoff):
 
 def main(argv=None, *, plan_path=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--plan', type=Path, default=plan_path)
     commands = parser.add_subparsers(dest='command', required=True)
     commands.add_parser('hash-plan')
     prep = commands.add_parser('prepare')
@@ -975,7 +974,7 @@ def main(argv=None, *, plan_path=None):
         sub.add_argument('--handoff', type=Path, required=True)
     args = parser.parse_args(argv)
     try:
-        c = load_constants(args.plan)
+        c = load_constants(plan_path)
         if args.command == 'hash-plan':
             hash_plan(c)
         else:

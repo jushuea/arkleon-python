@@ -362,7 +362,7 @@ def test_duration_quarters_differs(bench, tmp_path, monkeypatch):
     assert result['on'] == 'PERIOD_DIFFERS'
 
 
-@pytest.mark.parametrize('field', ['accession_id', 'tag', 'taxonomy', 'coreg'])
+@pytest.mark.parametrize('field', ['accession_id', 'tag', 'taxonomy', 'coreg', 'segments'])
 def test_different_key_field_is_absent(bench, tmp_path, monkeypatch, field):
     result, _, _, _ = one_draw(bench, tmp_path, monkeypatch,
         lambda d: [page([api_row(d, **{field: 'different'})])])
